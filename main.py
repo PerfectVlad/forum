@@ -1,8 +1,9 @@
+import os
 from datetime import datetime
 #from os import abort
-
+import flask
 from flask_login import LoginManager, login_user, login_required, logout_user, current_user
-from flask import Flask, render_template, make_response, session, request
+from flask import Flask, render_template, make_response, session, request, current_app, send_from_directory
 from flask_wtf import FlaskForm
 from werkzeug.exceptions import abort
 from werkzeug.utils import redirect
@@ -21,6 +22,14 @@ app.config['SECRET_KEY'] = 'yandexlyceum_secret_key'
 
 login_manager = LoginManager()
 login_manager.init_app(app)
+
+@app.route('/uploads/<path:filename>', methods=['GET', 'POST'])
+def download(filename):
+    print(flask.current_app.root_path)
+    uploads = os.path.join(current_app.root_path)
+    #return send_from_directory(directory=uploads, path='/', filename=filename)
+    return send_from_directory(directory=uploads, path='/' + filename)
+
 
 @app.route('/news_delete/<int:id>', methods=['GET', 'POST'])
 @login_required

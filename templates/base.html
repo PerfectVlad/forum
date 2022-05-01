@@ -12,12 +12,14 @@
 <body>
 <header>
     <nav class="navbar navbar-light bg-light">
-        <a class="navbar-brand fg-primary" href="#">Gambit </a>
+        <a class="navbar-brand fg-primary" href="#"><p>
+    <font size="7" color="red" face="Franklin Gothic"</p>Gambit<p>
+    <font size="5" color="black" face="Helvetica"</p> </a>
     </nav>
 </header>
 <!-- Begin page content -->
 {% if current_user.is_authenticated %}
-    <a class="navbar-brand" href="/logout">{{ current_user.name }}</a>
+    <a class="navbar-brand" href="/logout">Выход</a>
 {% else %}
     <p>
         <a class="btn btn-primary " href="/register">Зарегистрироваться</a>
