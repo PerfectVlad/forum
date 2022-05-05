@@ -3,13 +3,14 @@ from datetime import datetime
 #from os import abort
 import flask
 from flask_login import LoginManager, login_user, login_required, logout_user, current_user
-from flask import Flask, render_template, make_response, session, request, current_app, send_from_directory
+from flask import Flask, render_template, make_response, session, request, current_app, send_from_directory, send_file
 from flask_wtf import FlaskForm
 from werkzeug.exceptions import abort
 from werkzeug.utils import redirect
 from wtforms import EmailField, PasswordField, BooleanField, SubmitField
 from wtforms.validators import DataRequired
 #шрифт Franklin Gothic
+#шрифт ALGERIAN
 from data import db_session
 from data.loginform import LoginForm
 from data.news import News
@@ -23,12 +24,29 @@ app.config['SECRET_KEY'] = 'yandexlyceum_secret_key'
 login_manager = LoginManager()
 login_manager.init_app(app)
 
-#@app.route('/uploads/<path:filename>', methods=['GET', 'POST'])
-#def download(filename):
-    #print(flask.current_app.root_path)
-    #uploads = os.path.join(current_app.root_path)
-    #return send_from_directory(directory=uploads, path='/', filename=filename)
-    #return send_from_directory(directory=uploads, path='/' + filename)
+
+@app.route("/get/<int:news_id>", methods=['GET'])
+def get_file(news_id):
+
+    try:
+        os.remove(f"{news_id}.txt")
+    except Exception as e:
+        print(e)
+
+    db_sess = db_session.create_session()
+    news = db_sess.query(News).filter(news_id == News.id).first()
+
+    f = open(f"{news_id}.txt", "w")
+
+    content = f"{news.title} - {news.created_date}\n\n{news.content}"
+
+    f.write(content)
+    f.close()
+
+    r = send_file(f'{news_id}.txt', as_attachment=True)
+    #r = send_file(f'{news_id}.txt', as_attachment=True, download_name=news.title)
+    # штука для записи файла не по id а по названию
+    return r
 
 
 @app.route('/news_delete/<int:id>', methods=['GET', 'POST'])
@@ -44,6 +62,7 @@ def news_delete(id):
     else:
         abort(404)
     return redirect('/')
+
 
 @app.route('/news',  methods=['GET', 'POST'])
 @login_required
@@ -61,6 +80,7 @@ def add_news():
         return redirect('/')
     return render_template('news.html', title='Добавление новости',
                            form=form)
+
 
 @app.route('/news/<int:id>', methods=['GET', 'POST'])
 @login_required
@@ -116,6 +136,7 @@ def login():
 def logout():
     logout_user()
     return redirect("/")
+
 
 @login_manager.user_loader
 def load_user(user_id):
@@ -212,8 +233,6 @@ def main():
     user.created_date = datetime.now()
     db_sess.commit()
 
-
-
     news = News(title="Здравствуйте!", content="Это ваш персональный журнал заметок!",
                 user_id=1, is_private=False)
     #db_sess.add(news)
@@ -222,26 +241,9 @@ def main():
     for news in user.news:
         print(news)
 
-   # if current_user.is_authenticated:
-      #  news = db_sess.query(News).filter(
-        #    (News.user == current_user) | (News.is_private != True))
-    #else:
-        #news = db_sess.query(News).filter(News.is_private != True)
     app.run()
-
-
-
 
 
 
 if __name__ == '__main__':
     main()
-
-#if __name__ == '__main__':
-   # main()
-    #app.run(port=8080, host='127.0.0.1')
-
-#http://127.0.0.2:8080/index
-
-
-##19-26 ???????? base.html
