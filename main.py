@@ -9,7 +9,7 @@ from werkzeug.exceptions import abort
 from werkzeug.utils import redirect
 from wtforms import EmailField, PasswordField, BooleanField, SubmitField
 from wtforms.validators import DataRequired
-
+#шрифт Franklin Gothic
 from data import db_session
 from data.loginform import LoginForm
 from data.news import News
@@ -23,12 +23,12 @@ app.config['SECRET_KEY'] = 'yandexlyceum_secret_key'
 login_manager = LoginManager()
 login_manager.init_app(app)
 
-@app.route('/uploads/<path:filename>', methods=['GET', 'POST'])
-def download(filename):
-    print(flask.current_app.root_path)
-    uploads = os.path.join(current_app.root_path)
+#@app.route('/uploads/<path:filename>', methods=['GET', 'POST'])
+#def download(filename):
+    #print(flask.current_app.root_path)
+    #uploads = os.path.join(current_app.root_path)
     #return send_from_directory(directory=uploads, path='/', filename=filename)
-    return send_from_directory(directory=uploads, path='/' + filename)
+    #return send_from_directory(directory=uploads, path='/' + filename)
 
 
 @app.route('/news_delete/<int:id>', methods=['GET', 'POST'])
